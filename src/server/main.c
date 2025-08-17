@@ -15,6 +15,7 @@ int main(int argc,char *argv[]){
     const char *IP = "localhost";
     const char *PORT = "3000";
     int listener_socket = tcp_listener(IP,PORT);
+    event_handler(listener_socket);
 
     
 

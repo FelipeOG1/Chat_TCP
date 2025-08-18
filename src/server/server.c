@@ -73,7 +73,6 @@ int tcp_listener(const char * ip,const char * port){
   
 }
 
-
 //TODO: pass fds for reference to a client_handler
 void event_handler(int sock_fd){
    struct pollset poll_set;

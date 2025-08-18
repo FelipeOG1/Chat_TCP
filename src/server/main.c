@@ -12,13 +12,15 @@
 
 
 int main(int argc,char *argv[]){
-    const char *IP = "localhost";
-    const char *PORT = "3000";
-    int listener_socket = tcp_listener(IP,PORT);
-    event_handler(listener_socket);
-
+  const char *IP = "localhost";
+  const char *PORT = "3000";
+  int socket_fd = tcp_listener(IP,PORT);
+  event_handler(listener_socket);
+  
+  //TODO implement start_eventloop
+  
+  //start_event_loop(socket_fd);
     
-
 
   return 0;
 }

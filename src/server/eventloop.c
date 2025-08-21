@@ -1,11 +1,9 @@
-#include <eventloop.h>
-struct pollset{
-  struct pollfd fds[100];
-  int index;
-  int size;
-
-};
-
+#include "eventloop.h"
+#include <poll.h>
+#include <string.h>
+/*
+ *
+ *
 void init_pollset(struct pollset *poll_set, int sock_fd) {
   memset(poll_set->fds, 0, sizeof(poll_set->fds));
   poll_set->index = 0;
@@ -27,3 +25,4 @@ void event_loop(struct pollset *poll_set){
 
 
 }
+*/

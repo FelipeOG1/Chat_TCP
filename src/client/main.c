@@ -22,9 +22,26 @@ int main(int argc,char *argv[]){
   
   if (res_connect>0)
   {
-    printf("Conectado exitosamente a %s %s",IP,PORT);
+    printf("Connected to server!\n");
+    printf("write something\n");
+    int connection = 1;
+    while(connection)
+    {
+      char buffer[250]= {0};
+      if(fgets(buffer,sizeof(buffer),stdin)!=NULL)
+      {
+        printf("leido %s\n",buffer);
+
+      }
+      
+
+    }
+
+    printf("Conectado exitosamente a %s %s\n",IP,PORT);
+   
 
   }
+
   return 0;
 
 }

@@ -1,7 +1,4 @@
 #pragma once
 
-void say_hello(char name[] );
-
-
-
-
+int connect_to_server (const char *IP,const char *PORT);
+   

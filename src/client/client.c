@@ -1,9 +1,47 @@
 #include "client.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+#include <unistd.h>
+#include <netdb.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
-#define WORD "Hello"
-void say_hello(char name[]){
+int connect_to_server(const char *IP,const char *PORT)
+{
+  struct addrinfo hints;
+  struct addrinfo *res;
+  struct addrinfo *dummy;
+  struct sockaddr_storage their_addr;
+  socklen_t addr_size;
+  int sock,new_sock;
+  memset(&hints,0,sizeof(hints)); 
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_protocol = 0;
+  printf("entando en getadd\n");
+  printf("se va a resolver el puerto %s y la ip %s \n",PORT,IP);
+  int add_res = getaddrinfo(IP,PORT,&hints,&res);
+  if (add_res<0){
+    fprintf(stderr,"fallo\n");
+    return -1;
+  }
 
-  printf("Hola como estamos %s",name);
+  int sock1 = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
+  if(sock1<0){
+    fprintf(stderr,"fALLO EL SOCKET\n");
+  }
+  
+  int res_con = connect(sock1,res->ai_addr,res->ai_addrlen);
+
+  if(res_con == -1){
+    fprintf(stderr,"Couldnt connect to server check server is listening\n");
+    return -1;
+
+  }
+  
+  return sock1;
+
 }
 

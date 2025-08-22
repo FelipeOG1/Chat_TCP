@@ -48,7 +48,28 @@ int connect_to_server(const char *IP,const char *PORT)
 int send_message(int sockfd,char buffer[250],int msg_len)
 {
   int send_res = send(sockfd,buffer,msg_len,0);
+  if (send_res<0)
+  {
+    fprintf(stderr,"Fallo el send\n");
+    return -1;
 
+  }
+  return send_res;
+}
+
+int receive_client_message(int sockfd,char buffer[250],int buff_len)
+{
+
+  ssize_t bytes = recv(sockfd,buffer,buff_len,0);
+  
+  if (bytes<0)
+  {
+    fprintf(stderr,"Fallo el send\n");
+    return -1;
+
+  }
+
+  return bytes;
 
 
 }

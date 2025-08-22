@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <poll.h>
 #include "server.h"
+#include "serializer.h"
 #define BACKLOG 20
 
 struct pollset{
@@ -87,7 +88,7 @@ void event_handler(int sock_fd){
     }
    if(poll_count>0){
    //Binded socket received a event
-   if (poll_set.fds[0].revents & POLLIN) {
+   if (poll_set.fds[0].revents & POLLIN){
         struct sockaddr_storage client_addr;
         socklen_t client_len = sizeof(client_addr);
         int client_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &client_len);

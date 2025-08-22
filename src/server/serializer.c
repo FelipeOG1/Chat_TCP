@@ -2,12 +2,13 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include <arpa/inet.h>   // htons, htonl
+#include <arpa/inet.h>
+
+
 #define FLAG_ISMESSAGE 0x01 //recast to message struct
 #define FLAG_ISCONNECTION 0x02 //recast to connection struct
 #define FLAG_ISSMALL 0x04 //small read only thirdbyte
-#define MAX_PAYLOADLEN 500
-
+#define MAX_PAYLOADLEN 1000
 
 /*First byte flags (ISMESSAGE,ISCONNECTION)
  *Second byte payloadlen
@@ -36,7 +37,6 @@ void serialize_client_message(struct client_message cl_message, unsigned char *o
   header.payload_len = cl_message.payload_len;
   header.flags = htons(header.flags);
   header.payload_len = htons(header.payload_len);
-
   memcpy(out_buffer, &header, sizeof(header));
 }
 

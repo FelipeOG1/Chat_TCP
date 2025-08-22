@@ -16,13 +16,12 @@
  *
  *
  */
-
-
 struct connection_message{
   unsigned char user_name[50];
   unsigned char room_id[2];
   int sock_id;
 };
+
 struct client_message{
   unsigned char message_buffer[30];
   uint32_t client_fd;

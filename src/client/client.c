@@ -45,9 +45,9 @@ int connect_to_server(const char *IP,const char *PORT)
 
 }
 
-int send_message(int sockfd,char buffer[250])
+int send_message(int sockfd,char buffer[250],int msg_len)
 {
-
+  int send_res = send(sockfd,buffer,msg_len,0);
 
 
 

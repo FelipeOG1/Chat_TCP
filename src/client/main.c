@@ -30,7 +30,11 @@ int main(int argc,char *argv[]){
       char buffer[250]= {0};
       if(fgets(buffer,sizeof(buffer),stdin)!=NULL)
       {
-        printf("leido %s\n",buffer);
+        size_t len = strlen(buffer);
+        buffer[len-1]='\0';
+        len--;
+        printf("se van a enviar %zu bytes\n",len);
+        
 
       }
       

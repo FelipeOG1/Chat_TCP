@@ -43,14 +43,13 @@ int connect_to_server(const char *IP,const char *PORT)
 
 }
 
-int send_message(int sockfd,char buffer[250],int msg_len)
+int send_message(int sockfd,ClientMessage *msg,size_t len_struct)
 {
-  int send_res = send(sockfd,buffer,msg_len,0);
+  int send_res = send(sockfd,msg,len_struct,0);
   if (send_res<0)
   {
     fprintf(stderr,"Fallo el send\n");
     return -1;
-
   }
   return send_res;
 }

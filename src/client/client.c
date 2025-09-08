@@ -20,8 +20,6 @@ int connect_to_server(const char *IP,const char *PORT)
   hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_protocol = 0;
-  printf("entando en getadd\n");
-  printf("se va a resolver el puerto %s y la ip %s \n",PORT,IP);
   int add_res = getaddrinfo(IP,PORT,&hints,&res);
   if (add_res<0){
     fprintf(stderr,"fallo\n");
@@ -68,9 +66,12 @@ int receive_client_message(int sockfd,char buffer[250],int buff_len)
     return -1;
 
   }
+  
 
   return bytes;
 
 
 }
+
+
 

@@ -9,14 +9,7 @@
 #include <sys/socket.h>
 #include <poll.h>
 #define BUFFER_SIZE 250
-struct pollfd fds[2];
-fds[0].fd = sockfd;      // socket del servidor
-fds[0].events = POLLIN;  // leer mensajes
 
-fds[1].fd = STDIN_FILENO; // entrada estándar
-fds[1].events = POLLIN;   // leer input del usuario
-
-//TODO terminar cliente con poll;
 int main(int argc,char *argv[]){
   if(argc!=3)
   {
@@ -29,34 +22,32 @@ int main(int argc,char *argv[]){
   const char *PORT= argv[2];
   
   int sockfd = connect_to_server(IP,PORT);
+  assert(sockfd>0 && "connect_to server failed" );
+  struct pollfd fds[2];
+  fds[0].fd = sockfd;
+  fds[0].events = POLLIN;
+  fds[1].fd = STDIN_FILENO;
+  fds[1].events = POLLIN;
+  printf("Connected to server!\n");
+  printf("write something\n");
+  int connection = 1;
+  while(connection){
+    int ret = poll(fds, 2, -1); 
+    if(fds[0].revents & POLLIN) {
+      char recv_buffer[250];
+      int bytes = receive_client_message(sockfd, recv_buffer,BUFFER_SIZE);
+      recv_buffer[bytes] = '\0';
+      printf("%s",recv_buffer);
+     }
+     if(fds[1].revents & POLLIN){
+       char send_buffer[250] = {0};
+       fgets(send_buffer,sizeof(send_buffer),stdin);
+       send_message(sockfd, send_buffer, strlen(send_buffer));
+     }
+
   
-  if (sockfd>0)
-  {
-    printf("Connected to server!\n");
-    printf("write something\n");
-    int connection = 1;
-    while(connection)
-    {
-      int ret = poll(fds, 2, -1); 
-      if(fds[0].revents & POLLIN) {
-        char recv_buffer[250];
-        receive_client_message(sockfd, recv_buffer,BUFFER_SIZE);
-        printf("Server: %s", buffer);
-      }
-      if(fds[1].revents & POLLIN) {
-        // hay input del usuario
-        char send_buffer[250];
-        fgets(buffer, sizeof(buffer), stdin);
-        send_message(sockfd, buffer, strlen(send_buffer));
-      }
-
-    }
-
-    printf("Conectado exitosamente a %s %s\n",IP,PORT);
-   
-
   }
-
+  
   return 0;
 
 }

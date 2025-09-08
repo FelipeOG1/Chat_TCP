@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <poll.h>
+#include "../common/serializer.h"
 #define BUFFER_SIZE 250
 
 int main(int argc,char *argv[]){

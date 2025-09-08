@@ -23,6 +23,7 @@ void init_pollset(struct pollset *poll_set, int sock_fd) {
   poll_set->size = sizeof(poll_set->fds) / sizeof(poll_set->fds[0]);
   poll_set->fds[0].fd = sock_fd;
   poll_set->fds[0].events = POLLIN;
+  //Set index at 1 to start adding clients_sockets
   poll_set->index++;
 }
 int tcp_listener(const char * ip,const char * port){
@@ -106,17 +107,24 @@ void event_handler(int sock_fd){
           if (poll_set.fds[i].revents & POLLIN) {
             char buffer[200];
             int bytes = recv(poll_set.fds[i].fd, buffer, sizeof(buffer), 0);
+	    //IF bytes equal 0 means user send a disconect flag
             if (bytes == 0) {
               printf("El usuario con el socket descriptor %d se ha desconectado\n", poll_set.fds[i].fd);
+	      
               close(poll_set.fds[i].fd);
-              poll_set.fds[i] = poll_set.fds[poll_set.index- 1];
+	      //Replace the users socket position with the last position to avoid empty field in array.
+              poll_set.fds[i] = poll_set.fds[poll_set.index - 1];
               i--;
               poll_set.index--;
             }
             if (bytes > 0) {
               printf("se recibieron %d por parte de %d\n",bytes,poll_set.fds[i].fd);
+	      //Start at index 1 since all the clients socket start in pos 1.
               for (int j = 1; j < poll_set.index; j++) {
-                if (poll_set.fds[j].fd == poll_set.fds[i].fd) continue;
+		//If current fd is the one that sended the message continue.
+
+		//If you want echo sever commnet this line.
+               // if (poll_set.fds[j].fd == poll_set.fds[i].fd) continue;
                   int res_send = send(poll_set.fds[j].fd, buffer, bytes, 0);
                   if (res_send == -1) perror("send");
                   }

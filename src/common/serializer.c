@@ -19,16 +19,18 @@
  *
  *
  */
-void serialize_message (void * struct_pointer,char *final_buffer,uint8_t flags){
-  switch (flags){
-	  case FLAG_ISMESSAGE:{
-		printf("es un is messageee\n");
-	  	ClientMessage *ptr = (ClientMessage*)struct_pointer;
-		printf("%s",ptr->message_buffer);
-		printf("%zu",ptr->payload_len);
-			
-	  }
-		    
-	     
-  }
+
+void message_deserializer(void *struct_pointer){
+uint8_t flag = *(uint8_t *)struct_pointer;
+switch (flag){
+  case FLAG_ISMESSAGE:
+	  ClientMessage message = *(ClientMessage *)struct_pointer;
+	  printf("username :%s\n",message.username);
+	  printf("message:%s\n",message.message);
+	  break;
+	
+
 }
+
+}
+

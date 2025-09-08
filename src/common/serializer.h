@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <stddef.h>
 /*First byte flags (ISMESSAGE,ISCONNECTION)
  *Second byte payloadlen
  *Third and fourth byte extended payload len if necesary (if it is less than 170 is tha actual len if it is 70 chek the fifth an sixht byte)
@@ -16,27 +17,24 @@
  *
  *
  */
+
 struct connection_message{
   unsigned char user_name[50];
-  unsigned char room_id[2];
-  int sock_id;
+  uint8_t room_id[2];
 };
 
-struct client_message{
-  unsigned char message_buffer[30];
-  uint32_t client_fd;
-  uint64_t payload_len;
+typedef struct client_message{
+  char * message_buffer;
+  size_t payload_len;
+}ClientMessage;
+struct packet{
+  unsigned char flags;
+  void *struct_pointer;
 };
 
-struct packetHeader{
-  uint8_t flags;
-  uint16_t payload_len;
-};
+void serialize_message(struct packet p,char buffer[510]);
 
-void serialize_connection_message(struct connection_message cn_message);
-
-void serialize_client_message(struct client_message cl_message,unsigned char *out_buffer);
-
-void deserialize_message(unsigned char buffer[1000]);
+	
+	
 
 

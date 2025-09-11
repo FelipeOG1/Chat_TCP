@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <poll.h>
 #include "server.h"
-#include "serializer.h"
+#include "../common/serializer.h"
 #define BACKLOG 20
 
 struct pollset{
@@ -72,7 +72,17 @@ int tcp_listener(const char * ip,const char * port){
   int res_listen = listen(sock_fd,BACKLOG);
   printf("Listening into port %s\n",port);
   return sock_fd;
-  
+}
+
+void process_client_message(char buffer[200]){
+  uint8_t flag = *(uint8_t *)buffer;
+  switch (flag){
+  case FLAG_ISMESSAGE:
+	  ClientMessage cl = *(ClientMessage *)buffer;
+	  printf("mensaje recibido por parte de %s\n",cl.username);
+	  printf("mensaje:%s\n",cl.message);
+	  break;
+}
 }
 
 //TODO: pass fds for reference to a client_handler
@@ -106,6 +116,7 @@ void event_handler(int sock_fd){
         for (int i = 1; i < poll_set.index; i++) {
           if (poll_set.fds[i].revents & POLLIN) {
             char buffer[200];
+	    ClientMessage cl = *(ClientMessage *)buffer;
             int bytes = recv(poll_set.fds[i].fd, buffer, sizeof(buffer), 0);
 	    //IF bytes equal 0 means user send a disconect flag
             if (bytes == 0) {
@@ -119,10 +130,10 @@ void event_handler(int sock_fd){
             }
             if (bytes > 0) {
               printf("se recibieron %d por parte de %d\n",bytes,poll_set.fds[i].fd);
+	      process_client_message(buffer);
 	      //Start at index 1 since all the clients socket start in pos 1.
               for (int j = 1; j < poll_set.index; j++) {
 		//If current fd is the one that sended the message continue.
-
 		//If you want echo sever commnet this line.
                // if (poll_set.fds[j].fd == poll_set.fds[i].fd) continue;
                   int res_send = send(poll_set.fds[j].fd, buffer, bytes, 0);

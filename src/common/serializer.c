@@ -29,7 +29,6 @@ switch (flag){
 	  printf("message:%s\n",message.message);
 	  break;
 	
-
 }
 
 }

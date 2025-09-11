@@ -30,18 +30,18 @@ int main(int argc,char *argv[]){
   fds[1].fd = STDIN_FILENO;
   fds[1].events = POLLIN;
 
-  //TODO:create a username and send every message with a usernme witch message_struct;
   printf("Connected to server!\n");
   char message[MAX_MESSAGE_LEN];
   char username[MAX_USERNAME_LEN];
   printf("Digite su nombre de usuario \n");
+  //save username into struct
   fgets(username,sizeof(username),stdin);
   username[strlen(username)-1] = 0;
+  ClientMessage client_message;
+  strncpy(client_message.username,username,MAX_USERNAME_LEN);
+  //Set proper flag to server cast to proper struct
+  client_message.is_message_flag = 0x01;
   printf("Bienvenido %s ahora puede escribir un mensaje \n",username);
-  ClientMessage m;
-  strncpy(m.username,username,MAX_USERNAME_LEN);
-  m.is_message_flag = 0x01;
-  message_deserializer(&m);
   int connection = 1;
   while(connection){
     int ret = poll(fds, 2, -1); 
@@ -54,13 +54,11 @@ int main(int argc,char *argv[]){
      if(fds[1].revents & POLLIN){
         char send_buffer[250] = {0};
 	if (fgets(send_buffer,sizeof(send_buffer),stdin)!=NULL){
-  	  strncpy(m.message,send_buffer,MAX_MESSAGE_LEN);
-	  send_message(sockfd,&m,sizeof(ClientMessage));
-	     	
+  	  strncpy(client_message.message,send_buffer,MAX_MESSAGE_LEN);
+	  send_message(sockfd,&client_message,sizeof(ClientMessage));
 	}
      }
-
-  
+ 
   }
   
   return 0;

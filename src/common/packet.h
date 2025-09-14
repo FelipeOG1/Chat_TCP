@@ -30,4 +30,3 @@ typedef struct packet{
   size_t payload_len;
   char payload[MAX_PAYLOAD_LEN];
 }Packet;
-void message_deserializer(void * struct_pointer);

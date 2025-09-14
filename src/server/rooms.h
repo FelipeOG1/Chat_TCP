@@ -15,5 +15,5 @@ typedef struct rooms{
   uint8_t n_rooms;
 }Rooms;
 
-void init_rooms(Rooms * rooms)
+void init_rooms(Rooms * rooms);
 

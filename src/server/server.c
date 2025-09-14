@@ -10,6 +10,7 @@
 #include <poll.h>
 #include "server.h"
 #include "../common/packet.h"
+#include "rooms.h"
 #define BACKLOG 20
 
 struct pollset{
@@ -30,10 +31,6 @@ void init_pollset(struct pollset *poll_set, int sock_fd) {
   poll_set->index++;
 }
 
-void add_room(Rooms *rooms,Room room){
-  rooms->all_rooms[rooms->n_rooms + 1] = room;
-  rooms->n_rooms+=1; 
-}
 int tcp_listener(const char * ip,const char * port){
   struct addrinfo *res;
   struct addrinfo hints;
@@ -80,7 +77,8 @@ int tcp_listener(const char * ip,const char * port){
   printf("Listening into port %s\n",port);
   return sock_fd;
 }
-void process_recv_buffer(char buffer[200],Rooms *rooms){
+ 
+void process_recv_buffer (char buffer[200],Rooms *rooms,int client_sockfd){
   uint8_t flag = *(uint8_t *)buffer;
   switch (flag){
   case FLAG_ISMESSAGE:
@@ -89,10 +87,11 @@ void process_recv_buffer(char buffer[200],Rooms *rooms){
     printf("mensaje:%s\n",cl.message);
     break;
   case FLAG_ISADD_ROOM:
-    
-    AddRoom new_room = *(AddRoom *)buffer;
-    printf("%s wants create room with room name %s \n",new_room.username,new_room.room_name);
-     
+    AddRoom new_room_msg = *(AddRoom *)buffer;
+    printf("El usuario %s quiere crear un room",new_room_msg.username);
+    Room room;
+    init_room(&room,&new_room_msg,client_sockfd);
+    add_room(rooms,&room);
     break;
 }
 }
@@ -127,25 +126,25 @@ void event_handler(int sock_fd){
     }else{
         //Client socket received a event
         for (int i = 1; i < poll_set.index; i++) {
-          if (poll_set.fds[i].revents & POLLIN) {
+          if (poll_set.fds[i].revents & POLLIN){
             char buffer[200];
             int bytes = recv(poll_set.fds[i].fd, buffer, sizeof(buffer), 0);
 	    //IF bytes equal 0 means user send a disconect flag
             if (bytes == 0) {
               printf("El usuario con el socket descriptor %d se ha desconectado\n", poll_set.fds[i].fd);
-	      
               close(poll_set.fds[i].fd);
 	      //Replace the users socket position with the last position to avoid empty field in array.
               poll_set.fds[i] = poll_set.fds[poll_set.index - 1];
               i--;
               poll_set.index--;
             }
-            if (bytes > 0) {
+	    //CLIENT SOCKET SENDED A MESSAGE
+            if (bytes > 0){
+	      int client_sockfd = poll_set.fds[i].fd;
               printf("se recibieron %d por parte de %d\n",bytes,poll_set.fds[i].fd);
-	      process_recv_buffer(buffer,rooms);
+	      process_recv_buffer(buffer,&rooms,client_sockfd);
 	      //Start at index 1 since all the clients socket start in pos 1.
               for (int j = 1; j < poll_set.index; j++) {
-		//If current fd is the one that sended the message continue.
 		//If you want echo sever commnet this line.
                // if (poll_set.fds[j].fd == poll_set.fds[i].fd) continue;
                   int res_send = send(poll_set.fds[j].fd, buffer, bytes, 0);

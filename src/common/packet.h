@@ -12,16 +12,20 @@
 
 
 typedef struct join_room{
+  uint8_t is_join_room_flag;
   char username[MAX_USERNAME_LEN];
+  char room_name[MAX_ROOMNAME_LEN];
 }JoinRoom;
 
 typedef struct client_message{
   uint8_t is_message_flag;
   char username[MAX_USERNAME_LEN];
   char message[MAX_MESSAGE_LEN];
+  char room_name[MAX_ROOMNAME_LEN];
 }ClientMessage;
 
 typedef struct add_room{
+  uint8_t is_add_room_flag;
   char username[MAX_USERNAME_LEN];
   char room_name[MAX_ROOMNAME_LEN]; 
 }AddRoom;

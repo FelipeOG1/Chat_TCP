@@ -9,8 +9,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <poll.h>
-#include "../common/serializer.h"
 #include "interface.h"
+#include "client.h"
 #define BUFFER_SIZE 250
 
 int main(int argc,char *argv[]){
@@ -25,7 +25,7 @@ int main(int argc,char *argv[]){
   int sockfd = connect_to_server(IP,PORT);
   assert(sockfd>0 && "connect_to server failed" );
   printf("AAAAAA");
-  render_menu_window();
+  render_menu_window(sockfd);
   return 0;
 
   struct pollfd fds[2];

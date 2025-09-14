@@ -54,23 +54,14 @@ int send_message(int sockfd,ClientMessage *msg,size_t len_struct)
   return send_res;
 }
 
-int receive_client_message(int sockfd,char buffer[250],int buff_len)
-{
-
-  ssize_t bytes = recv(sockfd,buffer,buff_len,0);
-  
-  if (bytes<0)
+int send_add_room(int sockfd, AddRoom *msg,size_t len_struct){
+  int send_res = send(sockfd,msg,len_struct,0);
+  if (send_res<0)
   {
     fprintf(stderr,"Fallo el send\n");
     return -1;
-
   }
-  
-
-  return bytes;
-
-
+  return send_res;
 }
-
 
 

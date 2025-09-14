@@ -2,27 +2,37 @@
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "client.h"
 #define MAX_Y 40
 #define MAX_X 153
-void render_create_room_window(){
+void render_create_room_window(int sockfd){
    char room_name_buffer[100];
+   const char * username = "Felipe";
+   AddRoom j;
+
+   j.is_add_room_flag = 0x02;
+   strcpy(j.username,username);
    refresh();
    initscr();
-   noecho();
    cbreak();
    WINDOW * user_input = newwin(3,142,0, 6);
    refresh();
    box(user_input,0,0);
    wprintw(user_input,"TYPE NEW ROOM NAME");
    wmove(user_input,1,1);
+   wgetstr(user_input,j.room_name);
    wrefresh(user_input);
+   move(20,20);
+   printw("%s wants to create the room named %s",j.username,j.room_name);
+   getch();
+   send_add_room (sockfd,&j,sizeof(j));
    endwin();
    exit(1);
 }
 
-void render_menu_window(){
+void render_menu_window(int sockfd){
   initscr();
-  noecho();
   cbreak();
   //SETUP WINOW POSITION AND INITIAL CURSOR POSITION
   WINDOW * menu_window = newwin(10,142,0, 6);
@@ -62,7 +72,7 @@ void render_menu_window(){
       if (y == 1 && x == 71){
        endwin();
        clear();
-       render_create_room_window();
+       render_create_room_window(sockfd);
        
       }
     }

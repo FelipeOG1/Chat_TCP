@@ -1,10 +1,10 @@
 #pragma once
 #include <stdint.h>
 #include <stddef.h>
-
 #define FLAG_ISMESSAGE 0x01 //recast to message struct
 #define FLAG_ISADD_ROOM 0x02 //recast to connection struct
 #define FLAG_ISJOIN_ROOM 0x04
+#define FLAG_ISSHOW_ROOM 0x08
 #define MAX_PAYLOAD_LEN 1000
 #define MAX_MESSAGE_LEN 500
 #define MAX_USERNAME_LEN 20
@@ -29,8 +29,14 @@ typedef struct add_room{
   char username[MAX_USERNAME_LEN];
   char room_name[MAX_ROOMNAME_LEN]; 
 }AddRoom;
-typedef struct packet{
-  unsigned char flags;
-  size_t payload_len;
-  char payload[MAX_PAYLOAD_LEN];
-}Packet;
+
+typedef struct show_rooms_client{
+  uint8_t is_show_room_flag;
+  
+}ShowRoomsClient;
+
+typedef struct show_rooms_server{
+  char *room_names[250];
+}ShowRoomsServer;
+
+

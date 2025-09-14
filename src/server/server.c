@@ -68,22 +68,22 @@ int tcp_listener(const char * ip,const char * port){
     exit(1);
 
   }
-  
   int res_listen = listen(sock_fd,BACKLOG);
   printf("Listening into port %s\n",port);
   return sock_fd;
 }
-
 void process_recv_buffer(char buffer[200]){
   uint8_t flag = *(uint8_t *)buffer;
   switch (flag){
   case FLAG_ISMESSAGE:
-	  ClientMessage cl = *(ClientMessage *)buffer;
-	  printf("mensaje recibido por parte de %s\n",cl.username);
-	  printf("mensaje:%s\n",cl.message);
-	  break;
+    ClientMessage cl = *(ClientMessage *)buffer;
+    printf("mensaje recibido por parte de %s\n",cl.username);
+    printf("mensaje:%s\n",cl.message);
+    break;
   case FLAG_ISADD_ROOM:
-	  
+    AddRoom new_room = *(AddRoom *)buffer;
+    printf("%s wants create room with room name %s \n",new_room.username,new_room.room_name);
+    break;
 }
 }
 
@@ -119,7 +119,6 @@ void event_handler(int sock_fd){
           if (poll_set.fds[i].revents & POLLIN) {
             char buffer[200];
             int bytes = recv(poll_set.fds[i].fd, buffer, sizeof(buffer), 0);
-	    process_recv_buffer(buffer);
 	    //IF bytes equal 0 means user send a disconect flag
             if (bytes == 0) {
               printf("El usuario con el socket descriptor %d se ha desconectado\n", poll_set.fds[i].fd);
@@ -132,7 +131,7 @@ void event_handler(int sock_fd){
             }
             if (bytes > 0) {
               printf("se recibieron %d por parte de %d\n",bytes,poll_set.fds[i].fd);
-	      process_client_message(buffer);
+	      process_recv_buffer(buffer);
 	      //Start at index 1 since all the clients socket start in pos 1.
               for (int j = 1; j < poll_set.index; j++) {
 		//If current fd is the one that sended the message continue.

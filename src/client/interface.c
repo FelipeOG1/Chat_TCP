@@ -16,6 +16,7 @@ void render_create_room_window(){
    wmove(user_input,1,1);
    wrefresh(user_input);
    getch();
+   getch();
    endwin();
    exit(1);
 }

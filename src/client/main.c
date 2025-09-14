@@ -10,6 +10,7 @@
 #include <sys/socket.h>
 #include <poll.h>
 #include "../common/serializer.h"
+#include "interface.h"
 #define BUFFER_SIZE 250
 
 int main(int argc,char *argv[]){
@@ -20,10 +21,13 @@ int main(int argc,char *argv[]){
   
   }
   const char *IP = argv[1];
-
   const char *PORT= argv[2];
   int sockfd = connect_to_server(IP,PORT);
   assert(sockfd>0 && "connect_to server failed" );
+  printf("AAAAAA");
+  render_menu_window();
+  return 0;
+
   struct pollfd fds[2];
   fds[0].fd = sockfd;
   fds[0].events = POLLIN;

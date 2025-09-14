@@ -5,6 +5,7 @@
 #define MAX_Y 40
 #define MAX_X 153
 void render_create_room_window(){
+   char room_name_buffer[100];
    refresh();
    initscr();
    noecho();
@@ -15,8 +16,6 @@ void render_create_room_window(){
    wprintw(user_input,"TYPE NEW ROOM NAME");
    wmove(user_input,1,1);
    wrefresh(user_input);
-   getch();
-   getch();
    endwin();
    exit(1);
 }

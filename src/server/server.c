@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <poll.h>
 #include "server.h"
-#include "../common/serializer.h"
+#include "../common/packet.h"
 #define BACKLOG 20
 
 struct pollset{
@@ -74,7 +74,7 @@ int tcp_listener(const char * ip,const char * port){
   return sock_fd;
 }
 
-void process_client_message(char buffer[200]){
+void process_recv_buffer(char buffer[200]){
   uint8_t flag = *(uint8_t *)buffer;
   switch (flag){
   case FLAG_ISMESSAGE:
@@ -82,6 +82,8 @@ void process_client_message(char buffer[200]){
 	  printf("mensaje recibido por parte de %s\n",cl.username);
 	  printf("mensaje:%s\n",cl.message);
 	  break;
+  case FLAG_ISADD_ROOM:
+	  
 }
 }
 
@@ -116,8 +118,8 @@ void event_handler(int sock_fd){
         for (int i = 1; i < poll_set.index; i++) {
           if (poll_set.fds[i].revents & POLLIN) {
             char buffer[200];
-	    ClientMessage cl = *(ClientMessage *)buffer;
             int bytes = recv(poll_set.fds[i].fd, buffer, sizeof(buffer), 0);
+	    process_recv_buffer(buffer);
 	    //IF bytes equal 0 means user send a disconect flag
             if (bytes == 0) {
               printf("El usuario con el socket descriptor %d se ha desconectado\n", poll_set.fds[i].fd);

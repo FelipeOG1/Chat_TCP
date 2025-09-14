@@ -8,11 +8,11 @@ all: client server
 
 client:
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) client/*.c common/*.c -o $(BIN_DIR)/client $(LDLIBS)
+	$(CC) $(CFLAGS) client/*.c common/*.h -o $(BIN_DIR)/client $(LDLIBS)
 
 server:
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) server/*.c common/*.c -o $(BIN_DIR)/server
+	$(CC) $(CFLAGS) server/*.c common/*.h -o $(BIN_DIR)/server
 
 clean:
 	rm -rf $(BIN_DIR)

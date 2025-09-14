@@ -77,20 +77,4 @@ int _send_message(int sockfd,void * msg_struct,size_t len_struct)
   return send_res;
 }
 
-int send_add_room(int sockfd, AddRoom *msg,size_t len_struct){
-  int send_res = send(sockfd,msg,len_struct,0);
-  if (send_res<0)
-  {
-    fprintf(stderr,"Fallo el send\n");
-    return -1;
-  }
-  return send_res;
-}
-
-int send_show_rooms(int sockfd, ShowRoomsClient *msg, size_t len_struct){
-  int send_res = send(sockfd,msg,len_struct,0);
-
-
-
-}
 

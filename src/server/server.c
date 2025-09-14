@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
@@ -17,6 +18,8 @@ struct pollset{
   int size;
 
 };
+
+
 void init_pollset(struct pollset *poll_set, int sock_fd) {
   memset(poll_set->fds, 0, sizeof(poll_set->fds));
   poll_set->index = 0;
@@ -25,6 +28,11 @@ void init_pollset(struct pollset *poll_set, int sock_fd) {
   poll_set->fds[0].events = POLLIN;
   //Set index at 1 to start adding clients_sockets
   poll_set->index++;
+}
+
+void add_room(Rooms *rooms,Room room){
+  rooms->all_rooms[rooms->n_rooms + 1] = room;
+  rooms->n_rooms+=1; 
 }
 int tcp_listener(const char * ip,const char * port){
   struct addrinfo *res;
@@ -72,7 +80,7 @@ int tcp_listener(const char * ip,const char * port){
   printf("Listening into port %s\n",port);
   return sock_fd;
 }
-void process_recv_buffer(char buffer[200]){
+void process_recv_buffer(char buffer[200],Rooms *rooms){
   uint8_t flag = *(uint8_t *)buffer;
   switch (flag){
   case FLAG_ISMESSAGE:
@@ -81,8 +89,10 @@ void process_recv_buffer(char buffer[200]){
     printf("mensaje:%s\n",cl.message);
     break;
   case FLAG_ISADD_ROOM:
+    
     AddRoom new_room = *(AddRoom *)buffer;
     printf("%s wants create room with room name %s \n",new_room.username,new_room.room_name);
+     
     break;
 }
 }
@@ -90,8 +100,9 @@ void process_recv_buffer(char buffer[200]){
 //TODO: pass fds for reference to a client_handler
 void event_handler(int sock_fd){
    struct pollset poll_set;
+   Rooms rooms;
+   init_rooms(&rooms);
    init_pollset(&poll_set,sock_fd);
-   
    while (1) {
     //Start listening to events
     int poll_count = poll(poll_set.fds, poll_set.index, -1);
@@ -131,7 +142,7 @@ void event_handler(int sock_fd){
             }
             if (bytes > 0) {
               printf("se recibieron %d por parte de %d\n",bytes,poll_set.fds[i].fd);
-	      process_recv_buffer(buffer);
+	      process_recv_buffer(buffer,rooms);
 	      //Start at index 1 since all the clients socket start in pos 1.
               for (int j = 1; j < poll_set.index; j++) {
 		//If current fd is the one that sended the message continue.

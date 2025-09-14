@@ -51,15 +51,15 @@ int main(int argc,char *argv[]){
     int ret = poll(fds, 2, -1); 
     if(fds[0].revents & POLLIN){
       char recv_buffer[250];
-      int bytes = receive_client_message(sockfd, recv_buffer,BUFFER_SIZE);
-      recv_buffer[bytes] = '\0';
-      printf("%s",recv_buffer);
+      //int bytes = receive_client_message(sockfd, recv_buffer,BUFFER_SIZE);
+      //recv_buffer[bytes] = '\0';
+      //printf("%s",recv_buffer);
      }
      if(fds[1].revents & POLLIN){
         char send_buffer[250] = {0};
 	if (fgets(send_buffer,sizeof(send_buffer),stdin)!=NULL){
   	  strncpy(client_message.message,send_buffer,MAX_MESSAGE_LEN);
-	  send_message(sockfd,&client_message,sizeof(ClientMessage));
+	  //send_message(sockfd,&client_message,sizeof(ClientMessage));
 	}
      }
  

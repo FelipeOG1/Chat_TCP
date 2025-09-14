@@ -43,9 +43,32 @@ int connect_to_server(const char *IP,const char *PORT)
 
 }
 
-int send_message(int sockfd,ClientMessage *msg,size_t len_struct)
+int send_message(int sockfd,void *msg_struct){
+  uint8_t flag = *(uint8_t *)msg_struct;
+  size_t len_struct = 0;
+  switch (flag){
+  case FLAG_ISMESSAGE:
+    len_struct = sizeof(ClientMessage);
+    break;
+  case FLAG_ISADD_ROOM:
+    len_struct = sizeof(AddRoom);
+    break;
+  case FLAG_ISJOIN_ROOM:
+    len_struct = sizeof(JoinRoom);
+    break;
+  case FLAG_ISSHOW_ROOM:
+    len_struct = sizeof(ShowRoomsClient);
+    break;
+ }
+
+  int res = _send_message(sockfd,msg_struct,len_struct);
+  return res;
+
+}
+
+int _send_message(int sockfd,void * msg_struct,size_t len_struct)
 {
-  int send_res = send(sockfd,msg,len_struct,0);
+  int send_res = send(sockfd,msg_struct,len_struct,0);
   if (send_res<0)
   {
     fprintf(stderr,"Fallo el send\n");
@@ -64,4 +87,10 @@ int send_add_room(int sockfd, AddRoom *msg,size_t len_struct){
   return send_res;
 }
 
+int send_show_rooms(int sockfd, ShowRoomsClient *msg, size_t len_struct){
+  int send_res = send(sockfd,msg,len_struct,0);
+
+
+
+}
 

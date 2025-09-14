@@ -10,7 +10,6 @@ void render_create_room_window(int sockfd){
    char room_name_buffer[100];
    const char * username = "Felipe";
    AddRoom j;
-
    j.is_add_room_flag = 0x02;
    strcpy(j.username,username);
    refresh();
@@ -26,7 +25,7 @@ void render_create_room_window(int sockfd){
    move(20,20);
    printw("%s wants to create the room named %s",j.username,j.room_name);
    getch();
-   send_add_room (sockfd,&j,sizeof(j));
+   send_message(sockfd,(void*)&j);
    endwin();
    exit(1);
 }

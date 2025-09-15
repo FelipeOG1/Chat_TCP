@@ -94,9 +94,9 @@ void process_recv_buffer (char buffer[200],Rooms *rooms,int client_sockfd){
     char *username = new_room_msg.username;
     char *room_name = rooms->all_rooms[rooms->n_rooms - 1].room_name;
     printf("%s ha creado el room %s\n",username,room_name);
-    
-    
-    
+    break;
+  case FLAG_ISSHOW_ROOM:
+    show_all_rooms(rooms);
     break;
 }
 }

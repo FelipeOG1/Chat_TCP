@@ -19,7 +19,7 @@ void init_room(Room *room,AddRoom *add_room_msg,int client_sockfd){
 
 void show_all_rooms(Rooms * rooms){
   for (int i=0; i<=rooms->n_rooms;i++){
-    printf("%s",rooms->all_rooms[i].room_name);
+    printf("%s\n",rooms->all_rooms[i].room_name);
   }
 
 }

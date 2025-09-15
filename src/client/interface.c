@@ -6,13 +6,12 @@
 #include "client.h"
 #define MAX_Y 40
 #define MAX_X 153
-void render_join_room_window(int sockfd){
 
 
-}
 void render_create_room_window(int sockfd){
    clear();
    echo();
+   curs_set(1);
    char room_name_buffer[100];
    const char * username = "Felipe";
    AddRoom j;
@@ -37,6 +36,20 @@ void render_create_room_window(int sockfd){
    exit(1);
 }
 
+void render_join_room_window(int sockfd){
+  //Send a show room flag to server
+  clear();
+  echo();
+  curs_set(1);
+  ShowRoomsClient msg;
+  msg.is_show_room_flag = 0x08;
+  send_message(sockfd,(void *)&msg);
+
+
+  getch();
+  endwin();
+  exit(0);
+}
 
 void render_menu_window(int sockfd){
   initscr();            // Iniciar ncurses
@@ -88,9 +101,7 @@ void render_menu_window(int sockfd){
 	    render_create_room_window(sockfd);
 	    // acción para "ADD ROOM"
 	} else if (strcmp(options[highlight], "JOIN ROOM") == 0) {
-	    // acción para "JOIN ROOM"
-	    mvprintw(3,10,"JOIN ROOM");
-	    // acción para "ADD ROOM"
+	    render_join_room_window(sockfd);
 	} else if (strcmp(options[highlight], "SHOW ROOMS") == 0) {
 	    // acción para "SHOW ROOMS"
 }

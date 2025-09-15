@@ -6,7 +6,13 @@
 #include "client.h"
 #define MAX_Y 40
 #define MAX_X 153
+void render_join_room_window(int sockfd){
+
+
+}
 void render_create_room_window(int sockfd){
+   clear();
+   echo();
    char room_name_buffer[100];
    const char * username = "Felipe";
    AddRoom j;
@@ -26,60 +32,78 @@ void render_create_room_window(int sockfd){
    printw("%s wants to create the room named %s",j.username,j.room_name);
    getch();
    send_message(sockfd,(void*)&j);
+   getch();
    endwin();
    exit(1);
 }
 
+
 void render_menu_window(int sockfd){
-  initscr();
-  cbreak();
-  //SETUP WINOW POSITION AND INITIAL CURSOR POSITION
-  WINDOW * menu_window = newwin(10,142,0, 6);
-  refresh();
-  box(menu_window,0,0);
-  wmove(menu_window,1,71);//CREATE ROOM COORDINATES (1,71)
-  wprintw(menu_window,"CREATE ROOM");   
-  wrefresh(menu_window);
-  wmove(menu_window,3,71);//JOIN ROOM COORDINATES (3,71)
-  wprintw(menu_window,"JOIN ROOM");
-  wmove(menu_window,1,71);//RESET CURSOR POSITION
-  wrefresh(menu_window);
-  //STARTS LISTENING TO USER KEYS (KEY_UP,KEY_DOWN)
-  keypad(menu_window, TRUE);
-  int key = 0;
-  while(key != 'e'){
-    int y,x;
-    getyx(menu_window,y,x);
-    key = wgetch(menu_window);
-    //HANDEL UP AND DOWN KEYS   
-    if (key == KEY_DOWN){
-      if (y == 1 && x == 71){
-        wmove(menu_window,3,71);
-      }else{
-       wmove(menu_window,y,x);
-      }
-    }else if(key == KEY_UP){
-      if (y == 3 && x == 71){
-        wmove(menu_window,1,71);
-      }else{
-        wmove(menu_window,y,x);
-      }
-    wrefresh(menu_window);
-    }
-    //HANDLE ENTER
-    if(key == 10 | key == KEY_ENTER){
-      if (y == 1 && x == 71){
-       endwin();
-       clear();
-       render_create_room_window(sockfd);
-       
-      }
-    }
-        
-  }
-   endwin();
+  initscr();            // Iniciar ncurses
+  start_color();        // Activar colores
+  cbreak();             // Modo línea por línea
+  noecho();             // No mostrar teclas presionadas
+  keypad(stdscr, TRUE); // Habilitar flechas
+  curs_set(0);
+    // Definir pares de colores: id, fg, bg
+  init_pair(1, COLOR_WHITE, COLOR_BLUE);  // Fondo azul
+  init_pair(2, COLOR_YELLOW, COLOR_BLACK); // Texto amarillo
+
+  char *options[] = {"JOIN ROOM","ADD ROOM","Salir"};
+  int n_options = 3;
+  int highlight = 0; // opción seleccionada
+  int ch;
+  while(1) {
+  clear();
+  for(int i = 0; i < n_options; i++) {
+    if(i == highlight) {
+      attron(COLOR_PAIR(1));      // Fondo azul
+      attron(A_BOLD);             // Negrita
+      mvprintw(5 + i, 10, "%s", options[i]);
+      attroff(A_BOLD);
+      attroff(COLOR_PAIR(1));
+   }else {
+	attron(COLOR_PAIR(2));      // Texto amarillo
+	mvprintw(5 + i, 10, "%s", options[i]);
+	attroff(COLOR_PAIR(2));
+   }
 }
 
+  ch = getch();
+  switch(ch) {
+    case KEY_UP:
+	highlight--;
+	if(highlight < 0) highlight = n_options - 1;
+	break;
+    case KEY_DOWN:
+	highlight++;
+	if(highlight >= n_options) highlight = 0;
+	break;
+    case 10: // Enter
+	if(highlight == n_options - 1) {
+	    endwin();
+	    exit(0); // Salir
+	} else {
+	if (strcmp(options[highlight], "ADD ROOM") == 0) {
+	    render_create_room_window(sockfd);
+	    // acción para "ADD ROOM"
+	} else if (strcmp(options[highlight], "JOIN ROOM") == 0) {
+	    // acción para "JOIN ROOM"
+	    mvprintw(3,10,"JOIN ROOM");
+	    // acción para "ADD ROOM"
+	} else if (strcmp(options[highlight], "SHOW ROOMS") == 0) {
+	    // acción para "SHOW ROOMS"
+}
+	    mvprintw(3,10,"SHOW ROOMS");
+	    // acción para "ADD ROOM"
+	}
+	break;
+}
+}
 
+    endwin();
+
+
+}
 
 

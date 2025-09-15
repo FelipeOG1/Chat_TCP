@@ -88,10 +88,15 @@ void process_recv_buffer (char buffer[200],Rooms *rooms,int client_sockfd){
     break;
   case FLAG_ISADD_ROOM:
     AddRoom new_room_msg = *(AddRoom *)buffer;
-    printf("El usuario %s quiere crear un room",new_room_msg.username);
     Room room;
     init_room(&room,&new_room_msg,client_sockfd);
     add_room(rooms,&room);
+    char *username = new_room_msg.username;
+    char *room_name = rooms->all_rooms[rooms->n_rooms - 1].room_name;
+    printf("%s ha creado el room %s\n",username,room_name);
+    
+    
+    
     break;
 }
 }

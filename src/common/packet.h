@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include <stdint.h>
 #include <stddef.h>
 #define FLAG_ISMESSAGE 0x01 //recast to message struct
@@ -36,7 +37,8 @@ typedef struct show_rooms_client{
 }ShowRoomsClient;
 
 typedef struct show_rooms_server{
-  char *room_names[250];
+  uint8_t is_show_room_flag;
+  char room_names[250][MAX_ROOMNAME_LEN];
 }ShowRoomsServer;
 
 

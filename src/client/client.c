@@ -76,5 +76,6 @@ int _send_message(int sockfd,void * msg_struct,size_t len_struct)
   }
   return send_res;
 }
+//TODO CREATE THE RECEIVE MESSAGE FROM SERVER FUNCTION;
 
 

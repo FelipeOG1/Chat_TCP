@@ -8,7 +8,7 @@ typedef struct room{
   char room_name[MAX_ROOMNAME_LEN];
   int clients_sockets[100];
   uint8_t sockets_index;
-  
+
 }Room;
 
 typedef struct rooms{

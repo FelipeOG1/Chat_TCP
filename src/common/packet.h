@@ -9,26 +9,26 @@
 #define MAX_PAYLOAD_LEN 1000
 #define MAX_MESSAGE_LEN 500
 #define MAX_USERNAME_LEN 20
-#define MAX_ROOMNAME_LEN 20
+#define MAX_ROOM_NAME_LEN 20
 
 
 typedef struct join_room{
   uint8_t is_join_room_flag;
   char username[MAX_USERNAME_LEN];
-  char room_name[MAX_ROOMNAME_LEN];
+  char room_name[MAX_ROOM_NAME_LEN];
 }JoinRoom;
 
 typedef struct client_message{
   uint8_t is_message_flag;
   char username[MAX_USERNAME_LEN];
   char message[MAX_MESSAGE_LEN];
-  char room_name[MAX_ROOMNAME_LEN];
+  char room_name[MAX_ROOM_NAME_LEN];
 }ClientMessage;
 
 typedef struct add_room{
   uint8_t is_add_room_flag;
   char username[MAX_USERNAME_LEN];
-  char room_name[MAX_ROOMNAME_LEN]; 
+  char room_name[MAX_ROOM_NAME_LEN]; 
 }AddRoom;
 
 typedef struct show_rooms_client{
@@ -38,7 +38,7 @@ typedef struct show_rooms_client{
 
 typedef struct show_rooms_server{
   uint8_t is_show_room_flag;
-  char room_names[250][MAX_ROOMNAME_LEN];
+  char room_names[250][MAX_ROOM_NAME_LEN];
 }ShowRoomsServer;
 
 

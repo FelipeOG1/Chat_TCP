@@ -1,11 +1,11 @@
 #pragma once
-
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include "../common/packet.h"
+
 typedef struct room{
-  char room_name[MAX_ROOMNAME_LEN];
+  char room_name[MAX_ROOM_NAME_LEN];
   int clients_sockets[100];
   uint8_t sockets_index;
 
@@ -15,6 +15,7 @@ typedef struct rooms{
   Room all_rooms[255];
   uint8_t n_rooms;
 }Rooms;
+
 
 void init_rooms(Rooms * rooms);
 void add_room(Rooms *rooms,Room*room);

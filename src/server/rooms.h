@@ -14,6 +14,7 @@ typedef struct room{
 typedef struct rooms{
   Room all_rooms[255];
   uint8_t n_rooms;
+  size_t room_names_len;
 }Rooms;
 
 

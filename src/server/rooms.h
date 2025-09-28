@@ -15,6 +15,8 @@ typedef struct rooms{
   Room all_rooms[255];
   uint8_t n_rooms;
   size_t room_names_len;
+  char room_names[255][MAX_ROOM_NAME_LEN];
+  int room_names_offset;
 }Rooms;
 
 

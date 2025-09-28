@@ -24,13 +24,10 @@ void init_room(Room *room,AddRoom *add_room_msg,int client_sockfd){
 }
 
 void show_all_rooms(Rooms * rooms){
-
   //COMPACTING BUFFER AS MUCH AS POSIBLE
-  
   uint8_t buffer[1+1+rooms->room_names_len + rooms->n_rooms];//use room_names_len to setup the smalles buffer possible
-  
   size_t offset = 0;
-  
+
   buffer[offset++] = FLAG_ISSHOW_ROOM;//first byte 
   buffer[offset++] = rooms->n_rooms;//second byte
 
@@ -40,11 +37,7 @@ void show_all_rooms(Rooms * rooms){
     //offset contemplates'\0'
     offset+=strlen(current_room_name) + 1;
    }
-
-
-  
-	
-  
-  
+  char *start_of_names = &buffer[2];
+  printf("%s",start_of_names);
 
 }

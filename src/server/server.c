@@ -92,10 +92,11 @@ void process_recv_buffer (char buffer[200],Rooms *rooms,int client_sockfd){
     init_room(&room,&new_room_msg,client_sockfd);
     add_room(rooms,&room);
     char *username = new_room_msg.username;
-    char *room_name = rooms->all_rooms[rooms->n_rooms - 1].room_name;
+    char *room_name = rooms->all_rooms[rooms->n_rooms - 1].room_name;//get the name from rooms array to make sure it was added
     printf("%s ha creado el room %s\n",username,room_name);
     break;
   case FLAG_ISSHOW_ROOM:
+    printf("se recibio el flag de show rooms\n");
     show_all_rooms(rooms);
     break;
 }

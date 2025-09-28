@@ -43,6 +43,19 @@ int connect_to_server(const char *IP,const char *PORT)
 
 }
 
+
+int _send_message(int sockfd,void * msg_struct,size_t len_struct)
+{
+  int send_res = send(sockfd,msg_struct,len_struct,0);
+  if (send_res<0)
+  {
+    fprintf(stderr,"Fallo el send\n");
+    return -1;
+  }
+  return send_res;
+}
+
+
 int send_message(int sockfd,void *msg_struct){
   uint8_t flag = *(uint8_t *)msg_struct;
   size_t len_struct = 0;
@@ -57,25 +70,14 @@ int send_message(int sockfd,void *msg_struct){
     len_struct = sizeof(JoinRoom);
     break;
   case FLAG_ISSHOW_ROOM:
-    len_struct = sizeof(ShowRoomsClient);
     break;
  }
 
   int res = _send_message(sockfd,msg_struct,len_struct);
   return res;
-
 }
 
-int _send_message(int sockfd,void * msg_struct,size_t len_struct)
-{
-  int send_res = send(sockfd,msg_struct,len_struct,0);
-  if (send_res<0)
-  {
-    fprintf(stderr,"Fallo el send\n");
-    return -1;
-  }
-  return send_res;
-}
+
 //TODO CREATE THE RECEIVE MESSAGE FROM SERVER FUNCTION;
 
 

@@ -20,14 +20,12 @@ int main(int argc,char *argv[]){
     return -1;
   
   }
+  printf("me cago en todooo");
   const char *IP = argv[1];
-  const char *PORT= argv[2];
-  int sockfd = connect_to_server(IP,PORT);
-  assert(sockfd>0 && "connect_to server failed" );
-  printf("AAAAAA");
+  const char *PORT = argv[2];
+  int sockfd = connect_to_server( IP, PORT);
   render_menu_window(sockfd);
   return 0;
-
   struct pollfd fds[2];
   fds[0].fd = sockfd;
   fds[0].events = POLLIN;

@@ -3,11 +3,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 #include "client.h"
 #define MAX_Y 40
 #define MAX_X 153
 
-
+void render_show_room_window(int sockfd){
+   clear();
+   echo();
+   curs_set(1);
+   uint8_t show_room_flag = 0x08;
+   getch();
+   _send_message(sockfd,&show_room_flag,1);//send one byte to server with flag
+}
 void render_create_room_window(int sockfd){
    clear();
    echo();
@@ -41,11 +49,6 @@ void render_join_room_window(int sockfd){
   clear();
   echo();
   curs_set(1);
-  ShowRoomsClient msg;
-  msg.is_show_room_flag = 0x08;
-  send_message(sockfd,(void *)&msg);
-
-
   getch();
   endwin();
   exit(0);
@@ -62,8 +65,8 @@ void render_menu_window(int sockfd){
   init_pair(1, COLOR_WHITE, COLOR_BLUE);  // Fondo azul
   init_pair(2, COLOR_YELLOW, COLOR_BLACK); // Texto amarillo
 
-  char *options[] = {"JOIN ROOM","ADD ROOM","Salir"};
-  int n_options = 3;
+  char *options[] = {"JOIN ROOM","ADD ROOM","SHOW ROOMS","Salir"};
+  int n_options = 4;
   int highlight = 0; // opción seleccionada
   int ch;
   while(1) {
@@ -103,10 +106,8 @@ void render_menu_window(int sockfd){
 	} else if (strcmp(options[highlight], "JOIN ROOM") == 0) {
 	    render_join_room_window(sockfd);
 	} else if (strcmp(options[highlight], "SHOW ROOMS") == 0) {
-	    // acción para "SHOW ROOMS"
+	    render_show_room_window(sockfd);
 }
-	    mvprintw(3,10,"SHOW ROOMS");
-	    // acción para "ADD ROOM"
 	}
 	break;
 }

@@ -9,6 +9,7 @@
 #define MAX_MESSAGE_LEN 500
 #define MAX_USERNAME_LEN 20
 #define MAX_ROOM_NAME_LEN 20
+#define MAX_NUM_OF_ROOMS 255
 
 
 typedef struct join_room{

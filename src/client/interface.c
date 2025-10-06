@@ -38,7 +38,7 @@ void render_create_room_window(int sockfd){
    move(20,20);
    printw("%s wants to create the room named %s",j.username,j.room_name);
    getch();
-   send_message(sockfd,(void*)&j);
+   send_message(sockfd,(void *)&j);
    getch();
    endwin();
    exit(1);

@@ -43,7 +43,6 @@ int connect_to_server(const char *IP,const char *PORT)
 
 }
 
-
 int _send_message(int sockfd,void * msg_struct,size_t len_struct)
 {
   int send_res = send(sockfd,msg_struct,len_struct,0);
@@ -54,7 +53,6 @@ int _send_message(int sockfd,void * msg_struct,size_t len_struct)
   }
   return send_res;
 }
-
 
 int send_message(int sockfd,void *msg_struct){
   uint8_t flag = *(uint8_t *)msg_struct;

@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
@@ -16,9 +17,8 @@ typedef struct rooms{
   Room all_rooms[MAX_NUM_OF_ROOMS];
   uint8_t n_rooms;
   size_t room_names_len;
-  char room_names[MAX_NUM_OF_ROOMS][MAX_ROOM_NAME_LEN];
-  int room_names_offset;
-  uint8_t room_ids[MAX_NUM_OF_ROOMS];
+  uint8_t buffer[1024];
+  int buffer_offset;
 }Rooms;
 
 

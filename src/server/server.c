@@ -20,7 +20,6 @@ struct pollset{
 
 };
 
-
 void init_pollset(struct pollset *poll_set, int sock_fd) {
   memset(poll_set->fds, 0, sizeof(poll_set->fds));
   poll_set->index = 0;
@@ -88,12 +87,7 @@ void process_recv_buffer (char buffer[200],Rooms *rooms,int client_sockfd){
     break;
   case FLAG_ISADD_ROOM:
     AddRoom new_room_msg = *(AddRoom *)buffer;
-    Room room;
-    init_room(&room,&new_room_msg,client_sockfd);
-    add_room(rooms,&room);
-    char *username = new_room_msg.username;
-    char *room_name = rooms->all_rooms[rooms->n_rooms - 1].room_name;//get the name from rooms array to make sure it was added
-    printf("%s ha creado el room %s\n",username,room_name);
+    add_room(rooms,&new_room_msg,client_sockfd);
     break;
   case FLAG_ISSHOW_ROOM:
     printf("se recibio el flag de show rooms\n");

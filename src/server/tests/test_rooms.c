@@ -11,6 +11,7 @@ void test_init_rooms(){
   assert(rooms.room_names_len == 0);
   
 }
+
 void test_add_room(){
   
   AddRoom sample1 = {.is_add_room_flag = FLAG_ISADD_ROOM,.room_name = "the room",.username = "martinez"};
@@ -26,13 +27,23 @@ void test_add_room(){
   assert(rooms.n_rooms == 2);
 }
 
+void test_show_all_rooms(){
+  AddRoom sample1 = {.is_add_room_flag = FLAG_ISADD_ROOM,.room_name = "Marcianos",.username = "martinez"};
+  AddRoom sample2= {.is_add_room_flag = FLAG_ISADD_ROOM,.room_name = "core dumped",.username = "martinez"};
+  Rooms rooms;
+  init_rooms(&rooms);
+  add_room(&rooms,&sample1,3);
+  add_room(&rooms,&sample2,5);
+  show_all_rooms(&rooms);
+  
+}
 
 int main(){
 
   test_add_room();
   test_init_rooms();
-
-
+  test_show_all_rooms();
+  
   printf("ALL TESTS SUCCESS!!\n");
   return 0;
 }

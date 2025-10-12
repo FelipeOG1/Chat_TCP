@@ -32,6 +32,7 @@ void add_room(Rooms *rooms ,AddRoom * add_room,int sockfd){
   rooms->buffer_offset+=written + 2; //written dont contemplate de null character
   rooms->n_rooms+=1;
   rooms->room_names_len+=current_room_name_len;
+  
 }
 
 void add_client_to_room(int sockfd,const char * room_name,Rooms *rooms){
@@ -39,10 +40,10 @@ void add_client_to_room(int sockfd,const char * room_name,Rooms *rooms){
 }
 
 void show_all_rooms(Rooms *rooms){
-  int start_names = 2;
-  for (int i =0;i<rooms->n_rooms;i++){
-     printf("%s",rooms->buffer[i]);
-  }
-  
+  int offset = 2;
+  char *current_name = (char *)&rooms->buffer[offset];
+  printf("%s\n",current_name);
+   
+ 
 }
 

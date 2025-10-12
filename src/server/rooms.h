@@ -25,3 +25,4 @@ void add_room(Rooms *rooms,AddRoom * add_room,int sockfd);
 void show_all_rooms(Rooms *rooms);
 void init_rooms(Rooms *rooms);
 void add_client_to_room(int sockfd,const char * room_name,Rooms *rooms);
+void show_all_rooms(Rooms *rooms);

@@ -14,15 +14,16 @@ void test_init_rooms(){
 void test_add_room(){
   
   AddRoom sample1 = {.is_add_room_flag = FLAG_ISADD_ROOM,.room_name = "the room",.username = "martinez"};
+  AddRoom sample2= {.is_add_room_flag = FLAG_ISADD_ROOM,.room_name = "foo",.username = "martinez"};
   Rooms rooms;
   init_rooms(&rooms);
   add_room(&rooms,&sample1,3);
-  assert(strcmp(rooms.all_rooms[0].room_name,"the room") == 0);
-
-  AddRoom sample2= {.is_add_room_flag = FLAG_ISADD_ROOM,.room_name = "foo",.username = "martinez"};
   add_room(&rooms,&sample2,5);
-  assert(strcmp(rooms.all_rooms[1].room_name,"foo") == 0);
   
+  assert(strcmp(rooms.all_rooms[0].room_name,"the room") == 0);
+  assert(strcmp(rooms.all_rooms[1].room_name,"foo") == 0);
+  assert(rooms.room_names_len == 11);
+  assert(rooms.n_rooms == 2);
 }
 
 

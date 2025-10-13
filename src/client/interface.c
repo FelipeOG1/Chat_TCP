@@ -1,20 +1,48 @@
 #include "interface.h"
 #include <ncurses.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
 #include <sys/types.h>
 #include "client.h"
 #define MAX_Y 40
 #define MAX_X 153
 
 void render_show_room_window(int sockfd){
-   clear();
-   echo();
-   curs_set(1);
-   uint8_t show_room_flag = 0x08;
-   getch();
-   _send_message(sockfd,&show_room_flag,1);//send one byte to server with flag
+   
+    uint8_t show_room_flag = 0x08;
+   _send_message(sockfd,&show_room_flag,1);//ask for room names
+   uint8_t buffer[1024];
+   ssize_t bytes_received = recv(sockfd,buffer,sizeof(buffer), 0);//prepare to rcv room_names
+   if (bytes_received>0){
+     int n_rooms = buffer[1];//first= byte has nunber of rooms
+     char *options[n_rooms];
+     fill_options_names(buffer,options,n_rooms);
+     clear();
+     echo();
+     curs_set(1);
+     int highlight = 0; // opción seleccionada
+     int ch;
+     for(int i = 0; i < n_rooms; i++) {
+       if(i == highlight) {
+         attron(COLOR_PAIR(1));      // Fondo azul
+         attron(A_BOLD);             // Negrita
+         mvprintw(5 + i, 10, "%s", options[i]);
+         attroff(A_BOLD);
+         attroff(COLOR_PAIR(1));
+      }else {
+        attron(COLOR_PAIR(2));      // Texto amarillo
+	mvprintw(5 + i, 10, "%s", options[i]);
+	attroff(COLOR_PAIR(2));
+   }
+}
+
+     getch();
+   }
+    
+       
 }
 void render_create_room_window(int sockfd){
    clear();

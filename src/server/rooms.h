@@ -26,3 +26,4 @@ void show_all_rooms(Rooms *rooms);
 void init_rooms(Rooms *rooms);
 void add_client_to_room(int sockfd,const char * room_name,Rooms *rooms);
 void show_all_rooms(Rooms *rooms);
+void fill_options_names(uint8_t buffer[],char *options[]);

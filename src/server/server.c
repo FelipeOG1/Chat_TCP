@@ -91,7 +91,10 @@ void process_recv_buffer (char buffer[200],Rooms *rooms,int client_sockfd){
     break;
   case FLAG_ISSHOW_ROOM:
     printf("se recibio el flag de show rooms\n");
-    show_all_rooms(rooms);
+    int send_res =send(client_sockfd,rooms->buffer,rooms->buffer_offset,0);
+    if (send_res<0){
+      fprintf(stderr,"fallo el envio de show rooms para el socket %d",client_sockfd);
+    }
     break;
 }
 }

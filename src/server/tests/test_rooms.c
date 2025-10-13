@@ -1,5 +1,6 @@
 #include "../rooms.h"
 #include "../../common/packet.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
 
@@ -34,9 +35,14 @@ void test_show_all_rooms(){
   init_rooms(&rooms);
   add_room(&rooms,&sample1,3);
   add_room(&rooms,&sample2,5);
-  show_all_rooms(&rooms);
+  int n_rooms = rooms.buffer[1];
+  char *options[n_rooms];
+  fill_options_names(rooms.buffer,options);
+  for (int i = 0;i<n_rooms;i++){
+    printf("%s",options[i]);
+  }
   
-}
+ }
 
 int main(){
 

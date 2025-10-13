@@ -76,6 +76,15 @@ int send_message(int sockfd,void *msg_struct){
 }
 
 
+void fill_options_names(uint8_t *buffer,char *options[],int n_rooms){
+  int names_offset = 2;
+  for (int i =0 ;i<n_rooms;i++){
+    char *current_name = (char *)&buffer[names_offset];
+    options[i] = current_name;
+    names_offset += (int)strlen(current_name)+1;
+  }
+}
+ 
 //TODO CREATE THE RECEIVE MESSAGE FROM SERVER FUNCTION;
 
 

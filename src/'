@@ -9,11 +9,10 @@
 #include "client.h"
 #define MAX_Y 40
 #define MAX_X 153
-#define ENTER 10
-void render_menu_and_get_response(char *options[],int n_options,char res_buffer[],size_t buffer_size){
+
+void render_menu_and_get_response(char *options[],int n_options,char res_buffer[]){
   int highlight = 0; // selected option
-  int menu_mode = 1;
-  while (menu_mode){
+  while (1){
     for(int i = 0; i < n_options; i++) {
       if(i == highlight) {
         attron(COLOR_PAIR(1));      // Fondo azul
@@ -28,7 +27,9 @@ void render_menu_and_get_response(char *options[],int n_options,char res_buffer[
    }
 }
 
+     
     const int KEY_PRESS = getch();
+    int ENTER = 10;//ASCII for line break(ENTER)
     switch (KEY_PRESS) {
       case KEY_UP:
         highlight--;
@@ -39,10 +40,9 @@ void render_menu_and_get_response(char *options[],int n_options,char res_buffer[
 	if(highlight >= n_options) highlight = 0;
 	break;
 
-      case '\n':
+      case ENTER:
         const char *selected_option = options[highlight];
-	strncpy(res_buffer,selected_option,buffer_size - 1);
-	menu_mode = 0;
+	strncpy(res_buffer,selected_option,sizeof(res_buffer)-1);
 	break;
 
 
@@ -56,23 +56,24 @@ void render_menu_and_get_response(char *options[],int n_options,char res_buffer[
 }
 
 
+
+
+
 void render_show_room_window(int sockfd){ 
   uint8_t show_room_flag = 0x08;
   _send_message(sockfd,&show_room_flag,1);//ask for room names
   uint8_t buffer[1024];
   ssize_t bytes_received = recv(sockfd,buffer,sizeof(buffer), 0);//prepare to rcv room_names
   if (bytes_received>0){
-    clear();
-    curs_set(0);
-    initscr();
     int n_rooms = buffer[1];//first= byte has nunber of rooms
     char *options[n_rooms];
     fill_options_names(buffer,options,n_rooms);
-    char user_response[100];
-    render_menu_and_get_response(options,n_rooms,user_response,sizeof(user_response));
     clear();
+    echo();
+    curs_set(0);
+    char user_response[100];
+    render_menu_and_get_response(options,n_rooms,user_response);
     printw("%s",user_response);
-    getch();
    }
     
        

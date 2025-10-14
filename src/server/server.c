@@ -88,6 +88,8 @@ void process_recv_buffer (char buffer[200],Rooms *rooms,int client_sockfd){
   case FLAG_ISADD_ROOM:
     AddRoom new_room_msg = *(AddRoom *)buffer;
     add_room(rooms,&new_room_msg,client_sockfd);
+    uint8_t add_room_flag= 0x02;
+    int send_res =send(client_sockfd,&add_room_flag,1,0);//ask for room names
     break;
   case FLAG_ISSHOW_ROOM:
     printf("se recibio el flag de show rooms\n");
@@ -95,6 +97,7 @@ void process_recv_buffer (char buffer[200],Rooms *rooms,int client_sockfd){
     if (send_res<0){
       fprintf(stderr,"fallo el envio de show rooms para el socket %d",client_sockfd);
     }
+    printf("Se van a enviar un total de %d bytes al usuario\n",send_res);
     break;
 }
 }

@@ -24,7 +24,7 @@ int main(int argc,char *argv[]){
   const char *IP = argv[1];
   const char *PORT = argv[2];
   int sockfd = connect_to_server( IP, PORT);
-  render_menu_window(sockfd);
+  render_main_window(sockfd);
   return 0;
   struct pollfd fds[2];
   fds[0].fd = sockfd;

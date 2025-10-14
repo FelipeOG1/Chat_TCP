@@ -12,6 +12,9 @@
 #define MAX_NUM_OF_ROOMS 255
 
 
+//SERVER RESPONSES TO CLIENT FLAGS
+#define CREATE_ROOM_ACK_BITS = 1
+#define JOIN_ROOM_ACK_BITS =2
 typedef struct join_room{
   uint8_t is_join_room_flag;
   char username[MAX_USERNAME_LEN];

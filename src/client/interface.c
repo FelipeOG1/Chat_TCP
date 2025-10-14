@@ -6,14 +6,18 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <assert.h>
 #include "client.h"
+#include "../common/packet.h"
 #define MAX_Y 40
 #define MAX_X 153
 #define ENTER 10
+
 void render_menu_and_get_response(char *options[],int n_options,char res_buffer[],size_t buffer_size){
   int highlight = 0; // selected option
   int menu_mode = 1;
   while (menu_mode){
+    clear();
     for(int i = 0; i < n_options; i++) {
       if(i == highlight) {
         attron(COLOR_PAIR(1));      // Fondo azul
@@ -27,7 +31,7 @@ void render_menu_and_get_response(char *options[],int n_options,char res_buffer[
 	attroff(COLOR_PAIR(2));
    }
 }
-
+    refresh();
     const int KEY_PRESS = getch();
     switch (KEY_PRESS) {
       case KEY_UP:
@@ -58,29 +62,34 @@ void render_menu_and_get_response(char *options[],int n_options,char res_buffer[
 
 void render_show_room_window(int sockfd){ 
   uint8_t show_room_flag = 0x08;
-  _send_message(sockfd,&show_room_flag,1);//ask for room names
+  int send_res =send(sockfd,&show_room_flag,1,0);//ask for room names
+  assert(send_res>0);
   uint8_t buffer[1024];
+  memset(buffer,0,sizeof(buffer));
   ssize_t bytes_received = recv(sockfd,buffer,sizeof(buffer), 0);//prepare to rcv room_names
   if (bytes_received>0){
-    clear();
+    printw("%zu",bytes_received);
     curs_set(0);
-    initscr();
-    int n_rooms = buffer[1];//first= byte has nunber of rooms
+    getch();
+    int n_rooms = buffer[1];//second byte has nunber of rooms
     char *options[n_rooms];
+    getch();
+    exit(1);
     fill_options_names(buffer,options,n_rooms);
     char user_response[100];
     render_menu_and_get_response(options,n_rooms,user_response,sizeof(user_response));
-    clear();
     printw("%s",user_response);
     getch();
+    memset(user_response,0,sizeof(user_response));
    }
     
        
 }
 
-
+//TODO SET FLAG TO INDICATE THAT SERVER SUCCESFULLY THE ROOM 
 void render_create_room_window(int sockfd){
    clear();
+   refresh();
    echo();
    curs_set(1);
    char room_name_buffer[100];
@@ -89,7 +98,6 @@ void render_create_room_window(int sockfd){
    j.is_add_room_flag = 0x02;
    strcpy(j.username,username);
    refresh();
-   initscr();
    cbreak();
    WINDOW * user_input = newwin(3,142,0, 6);
    refresh();
@@ -98,13 +106,17 @@ void render_create_room_window(int sockfd){
    wmove(user_input,1,1);
    wgetstr(user_input,j.room_name);
    wrefresh(user_input);
-   move(20,20);
-   printw("%s wants to create the room named %s",j.username,j.room_name);
-   getch();
-   send_message(sockfd,(void *)&j);
-   getch();
-   endwin();
-   exit(1);
+   int send_response = send (sockfd,(void *)&j,sizeof(AddRoom),0);
+   //PROVISIONAL FIX
+   uint8_t buffer[10];
+   int recv_response = recv(sockfd,buffer,sizeof(buffer),0);
+   uint8_t flag =buffer[0];//get_flag_byte;
+   if (flag == 0x02){
+     printw("room created");
+   }
+
+   assert(send_response > 0);
+   
 }
 
 void render_join_room_window(int sockfd){
@@ -113,13 +125,9 @@ void render_join_room_window(int sockfd){
   echo();
   curs_set(1);
   getch();
-  endwin();
-  exit(0);
 }
 
-void render_menu_window(int sockfd){
-
-  clear();
+void render_main_window(int sockfd){
   initscr();            // Iniciar ncurses
   start_color();        // Activar colores
   cbreak();             // Modo línea por línea
@@ -133,6 +141,8 @@ void render_menu_window(int sockfd){
   int n_options = 4;
   int ch;
   while(1) {
+  clear();
+  curs_set(0);
   for(int i = 0; i < n_options; i++) {
     if(i == highlight) {
       attron(COLOR_PAIR(1));      // Fondo azul
@@ -146,7 +156,7 @@ void render_menu_window(int sockfd){
 	attroff(COLOR_PAIR(2));
    }
 }
-
+  refresh();
   ch = getch();
   switch(ch) {
     case KEY_UP:

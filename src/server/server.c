@@ -13,21 +13,18 @@
 #include "rooms.h"
 #define BACKLOG 20
 
-struct pollset{
-  struct pollfd fds[100];
-  int index;
-  int size;
-
-};
 
 void init_pollset(struct pollset *poll_set, int sock_fd) {
-  memset(poll_set->fds, 0, sizeof(poll_set->fds));
   poll_set->index = 0;
   poll_set->size = sizeof(poll_set->fds) / sizeof(poll_set->fds[0]);
+  
+  for (int i = 0; i<poll_set->size;i++){
+    poll_set->fds[i].fd = -1;//ignore file descriptors
+  }
   poll_set->fds[0].fd = sock_fd;
   poll_set->fds[0].events = POLLIN;
-  //Set index at 1 to start adding clients_sockets
-  poll_set->index++;
+  poll_set->index++;//start index at 1 to start adding clients_sockets
+
 }
 
 int tcp_listener(const char * ip,const char * port){
@@ -77,29 +74,59 @@ int tcp_listener(const char * ip,const char * port){
   return sock_fd;
 }
  
-void process_recv_buffer (char buffer[200],Rooms *rooms,int client_sockfd){
+void process_recv_buffer(char buffer[200],Rooms *rooms,int client_sockfd){
   uint8_t flag = *(uint8_t *)buffer;
+  int send_response = -1;
   switch (flag){
   case FLAG_ISMESSAGE:
     ClientMessage cl = *(ClientMessage *)buffer;
     printf("mensaje recibido por parte de %s\n",cl.username);
     printf("mensaje:%s\n",cl.message);
     break;
+
   case FLAG_ISADD_ROOM:
     AddRoom new_room_msg = *(AddRoom *)buffer;
     add_room(rooms,&new_room_msg,client_sockfd);
-    uint8_t add_room_flag= 0x02;
-    int send_res =send(client_sockfd,&add_room_flag,1,0);//ask for room names
+    uint8_t add_room_flag = 0x02;
+    send_response = send(client_sockfd,&add_room_flag,1,0);//ask for room names
+    assert(send_response>0);
     break;
   case FLAG_ISSHOW_ROOM:
     printf("se recibio el flag de show rooms\n");
-    int send_res =send(client_sockfd,rooms->buffer,rooms->buffer_offset,0);
-    if (send_res<0){
-      fprintf(stderr,"fallo el envio de show rooms para el socket %d",client_sockfd);
-    }
-    printf("Se van a enviar un total de %d bytes al usuario\n",send_res);
+    send_response = send (client_sockfd,rooms->buffer,rooms->buffer_offset,0);
+    assert(send_response>0);
+    printf("Se van a enviar un total de %d bytes al usuario\n",send_response);
     break;
 }
+}
+
+
+void close_connection(struct pollset *poll_set,int current_index){
+
+/**
+ * close_connection - Closes a socket and removes it from the poll set
+ * @poll_set: Pointer to the server's main poll_set structure
+ * @current_index: Index of the socket descriptor to remove from the poll set
+ *
+ * Calls `close()` on the socket descriptor located at @current_index.
+ * If it is not the last descriptor in the poll set, the last socket
+ * descriptor is moved into its position to keep the array compact.
+ * If it is the last descriptor, the position is cleared and marked
+ * as inactive (fd = -1).
+ *
+ */
+  int user_socket = poll_set->fds[current_index].fd;
+  close(poll_set->fds[current_index].fd);
+  if (current_index != poll_set->index - 1){  
+    poll_set->fds[current_index] = poll_set->fds[poll_set->index - 1];//move last fd to closed fd pos.			
+  }else{
+    poll_set->fds[current_index].fd = -1;
+    poll_set->fds[current_index].events = 0;
+    poll_set->fds[current_index].revents = 0;
+
+  }
+  poll_set->index--;
+  printf("User with socket descriptor %d disconect\n",user_socket);
 }
 
 //TODO: pass fds for reference to a client_handler
@@ -130,19 +157,13 @@ void event_handler(int sock_fd){
         poll_set.fds[poll_set.index].events = POLLIN;
         poll_set.index++;
     }else{
-        //Client socket received a event
         for (int i = 1; i < poll_set.index; i++) {
           if (poll_set.fds[i].revents & POLLIN){
             char buffer[200];
             int bytes = recv(poll_set.fds[i].fd, buffer, sizeof(buffer), 0);
-	    //IF bytes equal 0 means user send a disconect flag
-            if (bytes == 0) {
-              printf("El usuario con el socket descriptor %d se ha desconectado\n", poll_set.fds[i].fd);
-              close(poll_set.fds[i].fd);
-	      //Replace the users socket position with the last position to avoid empty field in array.
-              poll_set.fds[i] = poll_set.fds[poll_set.index - 1];
-              i--;
-              poll_set.index--;
+            if (bytes == 0) { //case bytes are 0 means user desconected
+	      close_connection(&poll_set,i); 
+             
             }
 	    //CLIENT SOCKET SENDED A MESSAGE
             if (bytes > 0){

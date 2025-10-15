@@ -62,25 +62,20 @@ void render_menu_and_get_response(char *options[],int n_options,char res_buffer[
 
 void render_show_room_window(int sockfd){ 
   uint8_t show_room_flag = 0x08;
-  int send_res =send(sockfd,&show_room_flag,1,0);//ask for room names
+  int send_res = send(sockfd,&show_room_flag,1,0);//ask for room names
   assert(send_res>0);
   uint8_t buffer[1024];
   memset(buffer,0,sizeof(buffer));
   ssize_t bytes_received = recv(sockfd,buffer,sizeof(buffer), 0);//prepare to rcv room_names
   if (bytes_received>0){
-    printw("%zu",bytes_received);
     curs_set(0);
-    getch();
     int n_rooms = buffer[1];//second byte has nunber of rooms
     char *options[n_rooms];
-    getch();
-    exit(1);
     fill_options_names(buffer,options,n_rooms);
     char user_response[100];
     render_menu_and_get_response(options,n_rooms,user_response,sizeof(user_response));
-    printw("%s",user_response);
-    getch();
-    memset(user_response,0,sizeof(user_response));
+    
+    
    }
     
        
@@ -92,30 +87,32 @@ void render_create_room_window(int sockfd){
    refresh();
    echo();
    curs_set(1);
+   
    char room_name_buffer[100];
+   uint8_t response_buffer[10];
    const char * username = "Felipe";
    AddRoom j;
    j.is_add_room_flag = 0x02;
-   strcpy(j.username,username);
-   refresh();
-   cbreak();
+   int send_response,recv_response;
    WINDOW * user_input = newwin(3,142,0, 6);
+   strcpy(j.username,username);
+   cbreak();
    refresh();
    box(user_input,0,0);
    wprintw(user_input,"TYPE NEW ROOM NAME");
    wmove(user_input,1,1);
    wgetstr(user_input,j.room_name);
    wrefresh(user_input);
-   int send_response = send (sockfd,(void *)&j,sizeof(AddRoom),0);
-   //PROVISIONAL FIX
-   uint8_t buffer[10];
-   int recv_response = recv(sockfd,buffer,sizeof(buffer),0);
-   uint8_t flag =buffer[0];//get_flag_byte;
+   
+   send_response = send (sockfd,(void *)&j,sizeof(AddRoom),0);
+   recv_response = recv(sockfd,response_buffer,sizeof(response_buffer),0);
+   assert(send_response > 0);
+   uint8_t flag = response_buffer[0];//get_flag_byte;
    if (flag == 0x02){
      printw("room created");
+     getch();
    }
 
-   assert(send_response > 0);
    
 }
 

@@ -165,18 +165,11 @@ void event_handler(int sock_fd){
 	      close_connection(&poll_set,i); 
              
             }
-	    //CLIENT SOCKET SENDED A MESSAGE
             if (bytes > 0){
 	      int client_sockfd = poll_set.fds[i].fd;
               printf("se recibieron %d por parte de %d\n",bytes,poll_set.fds[i].fd);
 	      process_recv_buffer(buffer,&rooms,client_sockfd);
-	      //Start at index 1 since all the clients socket start in pos 1.
-              for (int j = 1; j < poll_set.index; j++) {
-		//If you want echo sever commnet this line.
-               // if (poll_set.fds[j].fd == poll_set.fds[i].fd) continue;
-                  int res_send = send(poll_set.fds[j].fd, buffer, bytes, 0);
-                  if (res_send == -1) perror("send");
-                  }
+             
                 }
             }
         }

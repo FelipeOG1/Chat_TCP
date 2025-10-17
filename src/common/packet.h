@@ -28,7 +28,7 @@
  *  Indicates an empty room or null condition.
  *  Bit mask: 0x10 (0001 0000)
  */
-#define FLAG_NULL 0x10
+#define FLAG_IS_NULL 0x10
 
 /** Maximum allowed payload length */
 #define MAX_PAYLOAD_LEN 1000

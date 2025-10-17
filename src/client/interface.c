@@ -68,13 +68,22 @@ void render_show_room_window(int sockfd){
   memset(buffer,0,sizeof(buffer));
   ssize_t bytes_received = recv(sockfd,buffer,sizeof(buffer), 0);//prepare to rcv room_names
   if (bytes_received>0){
-    curs_set(0);
-    int n_rooms = buffer[1];//second byte has nunber of rooms
-    char *options[n_rooms];
-    fill_options_names(buffer,options,n_rooms);
-    char user_response[100];
-    render_menu_and_get_response(options,n_rooms,user_response,sizeof(user_response));
-    
+    uint8_t first_byte = buffer[0];//Check for is null flag (0x10)
+    if (first_byte == FLAG_IS_NULL){
+      clear();
+      printw("NO ROOMS TO SHOW");
+      getch();
+      
+    }else{
+      int n_rooms = buffer[1];//if there is rooms first byte has n_rooms
+      char *options[n_rooms];
+      fill_options_names(buffer,options,n_rooms);
+      char user_response[100];
+      curs_set(0);
+      render_menu_and_get_response(options,n_rooms,user_response,sizeof(user_response));
+        
+    }
+   
     
    }
     

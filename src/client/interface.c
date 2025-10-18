@@ -13,7 +13,13 @@
 #define MAX_X 153
 #define ENTER 10
 
-void render_menu_and_get_response(char *options[],int n_options,char res_buffer[],size_t buffer_size){
+
+
+void render_room_window(int sockfd){
+  clear();
+  printw("Bienvenido al room");
+}
+int render_menu_and_get_room_index(char *options[],int n_options,size_t buffer_size){
   int highlight = 0; // selected option
   int menu_mode = 1;
   while (menu_mode){
@@ -44,10 +50,9 @@ void render_menu_and_get_response(char *options[],int n_options,char res_buffer[
 	break;
 
       case '\n':
-        const char *selected_option = options[highlight];
-	strncpy(res_buffer,selected_option,buffer_size - 1);
 	menu_mode = 0;
-	break;
+	return highlight;
+	
 
 
     }
@@ -78,10 +83,21 @@ void render_show_room_window(int sockfd){
       int n_rooms = buffer[1];//if there is rooms first byte has n_rooms
       char *options[n_rooms];
       fill_options_names(buffer,options,n_rooms);
-      char user_response[100];
+      int user_response;//get_response in this case 
       curs_set(0);
-      render_menu_and_get_response(options,n_rooms,user_response,sizeof(user_response));
-        
+      int room_index = render_menu_and_get_room_index(options,n_rooms,sizeof(user_response));
+      JoinRoom join_room = {.room_index = room_index,.username = "martin",.is_join_room_flag = 0x04};
+      int send_response = send(sockfd,(void *)&join_room,sizeof(JoinRoom),0);
+      assert(send_response>0);
+      uint8_t recv_response[10]; 
+      bytes_received = recv(sockfd,&recv_response,sizeof(recv_response),0);
+      if (bytes_received>0 && recv_response[0] == FLAG_ISJOIN_ROOM){
+        clear();
+	printw("te uniste al room");
+      }
+      
+    
+      
     }
    
     

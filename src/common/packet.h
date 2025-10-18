@@ -48,7 +48,7 @@
 typedef struct join_room{
   uint8_t is_join_room_flag;
   char username[MAX_USERNAME_LEN];
-  char room_name[MAX_ROOM_NAME_LEN];
+  uint8_t room_index;
 }JoinRoom;
 
 typedef struct client_message{

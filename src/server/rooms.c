@@ -36,8 +36,9 @@ void add_room(Rooms *rooms ,AddRoom * add_room,int sockfd){
   
 }
 
-void add_client_to_room(int sockfd,const char * room_name,Rooms *rooms){
-  printf("no implementation");     
+void add_client_to_room(int sockfd,int room_index,Rooms *rooms){
+  Room room = rooms->all_rooms[room_index];
+  room.clients_sockets[room.sockets_index] = room_index; 
 }
 
 

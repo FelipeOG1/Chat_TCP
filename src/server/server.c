@@ -92,7 +92,6 @@ void process_recv_buffer(char buffer[200],Rooms *rooms,int client_sockfd){
     assert(send_response>0);
     break;
   case FLAG_ISSHOW_ROOM:
-    
     printf("se recibio el flag de show rooms\n");
     if (rooms->n_rooms >0){
       send_response = send (client_sockfd,rooms->buffer,rooms->buffer_offset,0);

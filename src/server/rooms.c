@@ -38,7 +38,11 @@ void add_room(Rooms *rooms ,AddRoom * add_room,int sockfd){
 
 void add_client_to_room(int sockfd,int room_index,Rooms *rooms){
   Room room = rooms->all_rooms[room_index];
-  room.clients_sockets[room.sockets_index] = room_index; 
+  room.clients_sockets[room.sockets_index] = sockfd;
+  
+  assert(room.clients_sockets[room.sockets_index]>0);
+	  
+  room.sockets_index +=1;
 }
 
 

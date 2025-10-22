@@ -101,6 +101,11 @@ void process_recv_buffer(char buffer[200],Rooms *rooms,int client_sockfd){
       send_response  = send(client_sockfd,&is_null_flag,sizeof(is_null_flag),0);
     }
     break;
+   case FLAG_ISJOIN_ROOM:
+     JoinRoom join_room = *(JoinRoom *)buffer;
+     add_client_to_room(client_sockfd,join_room.room_index, rooms);
+     
+     printf("el usuario se quiere unir al room que tiene el index de %d\n",join_room.room_index);
 }
 }
 
@@ -173,7 +178,7 @@ void event_handler(int sock_fd){
 	      int client_sockfd = poll_set.fds[i].fd;
               printf("se recibieron %d por parte de %d\n",bytes,poll_set.fds[i].fd);
 	      process_recv_buffer(buffer,&rooms,client_sockfd);
-             
+              
                 }
             }
         }

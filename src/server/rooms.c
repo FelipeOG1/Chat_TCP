@@ -12,6 +12,7 @@ static void init_room(Room *room,AddRoom *add_room_msg,int client_sockfd){
   strlcpy(room->room_name,add_room_msg->room_name,MAX_ROOM_NAME_LEN);//+1 pos add '\0'
   room->clients_sockets[room->sockets_index] = client_sockfd;//add creator of room socket into room sockets
   room->room_id = room_id_counter++;//room_id = room_id_counter and then increment by 1
+  room->sockets_index+=1;//prepare to receive more clients
 }
 
 void init_rooms(Rooms * rooms){
@@ -37,12 +38,12 @@ void add_room(Rooms *rooms ,AddRoom * add_room,int sockfd){
 }
 
 void add_client_to_room(int sockfd,int room_index,Rooms *rooms){
-  Room room = rooms->all_rooms[room_index];
-  room.clients_sockets[room.sockets_index] = sockfd;
+  int curr_socket_idx = rooms->all_rooms[room_index].sockets_index;
+  rooms->all_rooms[room_index].clients_sockets[curr_socket_idx] = sockfd;
+  rooms->all_rooms[room_index].sockets_index+=1;
   
-  assert(room.clients_sockets[room.sockets_index]>0);
-	  
-  room.sockets_index +=1;
 }
+
+
 
 

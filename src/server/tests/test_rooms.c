@@ -29,20 +29,30 @@ void test_add_room(){
 
 void test_add_client_room(){
 	
-  int sockfd = 3;
-  int sockfd2 = 30;
-  int room_index = 1;
-  AddRoom sample1 = {.is_add_room_flag = FLAG_ISADD_ROOM,.room_name = "Marcianos",.username = "martinez"};
-  AddRoom sample2= {.is_add_room_flag = FLAG_ISADD_ROOM,.room_name = "Nigus",.username = "martinez"};
+
+  AddRoom sample1 = {.is_add_room_flag = FLAG_ISADD_ROOM,.room_name = "Marcianos",.username = "martinez"};//index 0
+  AddRoom sample2= {.is_add_room_flag = FLAG_ISADD_ROOM,.room_name = "Nigus",.username = "goza"};//index 1
   Rooms rooms;
+  int martinez_socket = 3;
+  int goza_socket = 10;
   
   init_rooms(&rooms);
-  add_room(&rooms,&sample1,3);
-  add_room(&rooms,&sample2,5);
-  printf("%s",rooms.all_rooms[0].room_name);
-  add_client_to_room(sockfd2,0,&rooms);
-  add_client_to_room(sockfd2,0,&rooms);
+  add_room(&rooms,&sample1,martinez_socket);
+  add_room(&rooms,&sample2,goza_socket);
+
   
+  //Asserts for the room creators
+  assert(rooms.all_rooms[0].clients_sockets[0] == martinez_socket);//assert that creator socket was added
+  assert(rooms.all_rooms[1].clients_sockets[0] == goza_socket);//assert that index 1 creator was added
+  
+
+  //Asserts for new clients
+  int new_socket_1 = 29;
+  int new_socket_2 =1;
+  add_client_to_room(new_socket_1,0,&rooms);
+  add_client_to_room(new_socket_2,1,&rooms);
+  assert(rooms.all_rooms[0].clients_sockets[1] == new_socket_1); 
+  assert(rooms.all_rooms[1].clients_sockets[1] == new_socket_2); 
 }
 
 int main(){

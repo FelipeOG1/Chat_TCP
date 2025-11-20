@@ -31,7 +31,7 @@ void test_add_client_room(){
 	
 
   AddRoom sample1 = {.is_add_room_flag = FLAG_ISADD_ROOM,.room_name = "Marcianos",.username = "martinez"};//index 0
-  AddRoom sample2= {.is_add_room_flag = FLAG_ISADD_ROOM,.room_name = "Nigus",.username = "goza"};//index 1
+  AddRoom sample2= {.is_add_room_flag = FLAG_ISADD_ROOM,.room_name = "foo_bar",.username = "gobzera"};//index 1
   Rooms rooms;
   int martinez_socket = 3;
   int goza_socket = 10;

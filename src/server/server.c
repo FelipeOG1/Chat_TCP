@@ -105,7 +105,8 @@ void process_recv_buffer(char buffer[200],Rooms *rooms,int client_sockfd){
      JoinRoom join_room = *(JoinRoom *)buffer;
      add_client_to_room(client_sockfd,join_room.room_index, rooms);
      
-     printf("el usuario se quiere unir al room que tiene el index de %d\n",join_room.room_index);
+    
+     
 }
 }
 

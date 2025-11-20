@@ -30,7 +30,7 @@ void add_room(Rooms *rooms ,AddRoom * add_room,int sockfd){
   rooms->all_rooms[room.room_id] = room;
   size_t current_room_name_len = room.room_name_len;
   size_t written = strlcpy((char *)&rooms->buffer[rooms->buffer_offset],room.room_name,sizeof(rooms->buffer) - rooms->buffer_offset);
-  drooms->buffer_offset+=written + 1; //written dont contemplate de null character
+  rooms->buffer_offset+=written + 1; //written dont contemplate de null character
   rooms->n_rooms+=1;
   rooms->room_names_len+=current_room_name_len;
   rooms->buffer[1] = rooms->n_rooms;
